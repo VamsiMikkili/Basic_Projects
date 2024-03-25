@@ -1,18 +1,22 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Dialogs
-//import Obj 1.0
+import QtQuick.Dialogs 6.6
+import Obj 1.0
 
 ApplicationWindow {
     id: windowid
     title: " UUU Tool"
-    visible: true    
-    // width: 1920 // 1020
-    // height: 1080 // 780
+    visible: true
 
-    width: Screen.width * 2
-    height: Screen.height * 3
+    property real scalefactor : {
+        if(Screen.width > 1920) return 1.2
+        else if(Screen.height < 1080) return 0.8
+        else return 1
+    }
+
+    height: Math.round(1080*scalefactor)
+    width: Math.round(1920*scalefactor)
 
     flags: Qt.Window | Qt.FramelessWindowHint
 
@@ -30,8 +34,8 @@ ApplicationWindow {
             id: _image
             source: "qrc:/Image/Airaa_Logo.png"
             x: (_rect.width / 2) - width / 2
-            height: Screen.height * 0.1 //80
-            width: Screen.width * 0.2 //200
+            height: Screen.height * 0.1 *scalefactor
+            width: Screen.width * 0.2 * scalefactor
             anchors.bottom: _text.top
         }
 
@@ -40,7 +44,8 @@ ApplicationWindow {
             text: qsTr("MFG FLASH TOOL")
             anchors.centerIn: parent
             font.bold: true
-            font.pointSize: Screen.height * 0.04 //50
+            font.family: "Helvetica"
+            font.pointSize: Screen.height * 0.04 * scalefactor//50
         }
 
         Timer {
@@ -61,6 +66,52 @@ ApplicationWindow {
             }
         }
     }
+    Rectangle {
+        id: popupRect1
+        height: Math.round(200*scalefactor)
+        width: Math.round(300*scalefactor)
+        visible: false
+        anchors.centerIn: parent
+
+        Objref {
+            id: ref
+        }
+
+        function handleStatus(changePopup, notifyConnect, rectColor) {
+            myPopup.visible = changePopup === "true";
+            popuptxt.text = notifyConnect;
+            popuprect.color = rectColor;
+        }
+
+        Component.onCompleted: {
+            ref.status.connect(handleStatus);
+        }
+
+        Popup {
+            id: myPopup
+            visible: false
+            height: Math.round(60*scalefactor)
+            width: Math.round(160*scalefactor)
+
+            Rectangle {
+                id: popuprect
+                visible: true
+                height: Math.round(61*scalefactor)
+                width: Math.round(161*scalefactor)
+                anchors.centerIn: parent
+
+                Text {
+                    id: popuptxt
+                    text: ""
+                    color: "black"
+                    anchors.centerIn: parent
+                }
+            }
+            modal: true
+            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        }
+    }
+
 
     Item {
         id: mainwindid
@@ -76,42 +127,43 @@ ApplicationWindow {
             Image {
                 id: logoid
                 source: "qrc:/Image/flash1.png"
-                width: Screen.width * 0.015 // 25
-                height: Screen.height * 0.02  // 25
-                x: Screen.width * 0.004 // 5
-                y: Screen.height * 0.004
+                width: Screen.width * 0.015
+                height: Screen.height * 0.02
+                anchors.left: parent.left
+                anchors.leftMargin: Screen.width * 0.008
             }
 
             Label {
                 id: titleid
                 text: "UUU Flash Tool"
-                font.pointSize: Screen.height * 0.01 // 10
-                x: Screen.width * 0.025 // 40
-                y: Screen.height * 0.004 // 5
+                font.family: "Helvetica"
+                font.pointSize: Screen.height * 0.01
+                anchors.left: logoid.right
+                anchors.leftMargin: Screen.width * 0.005
             }
 
             Row {
-                x: 1800//Screen.width * 0.2 // 1740
-                spacing: Screen.width * 0.01 //15
-               // anchors.leftMargin: 500
+                x: Screen.width * 0.90
+                spacing: Screen.width * 0.01
 
                 Button {
                     id: miniid
-                    width: 25
-                    height: 30
+                    height: Math.round(30*scalefactor)
+                    width: Math.round(25*scalefactor)
                     background: Rectangle {
                         color: "#F0F0F0"
                     }
 
                     Image {
                         source: "qrc:/Image/minid.png"
-                        width: 25
-                        height: 30
+                        height: Math.round(30*scalefactor)
+                        width: Math.round(25*scalefactor)
                         anchors.centerIn: miniid
                     }
 
                     onClicked: {
-                        windowid.showMinimized()
+                        windowid.visibility = Window.Minimized
+
                     }
                 }
 
@@ -125,28 +177,28 @@ ApplicationWindow {
 
                     Image {
                         source: "qrc:/Image/maxid.png"
-                        width: 18
-                        height: 18
+                        height: Math.round(30*scalefactor)
+                        width: Math.round(25*scalefactor)
                         anchors.centerIn: maxid
                     }
 
                     onClicked: {
-                        windowid.showMaximized()
+                        windowid.visibility === Window.Maximized ? windowid.showNormal() : windowid.showMaximized()
                     }
                 }
 
                 Button {
                     id: closeid
-                    width: 25
-                    height: 30
+                    height: Math.round(30*scalefactor)
+                    width: Math.round(25*scalefactor)
                     background: Rectangle {
                         color: "#F0F0F0"
                     }
 
                     Image {
                         source: "qrc:/Image/closeid.png"
-                        width: 20
-                        height: 20
+                        height: Math.round(20*scalefactor)
+                        width: Math.round(20*scalefactor)
                         anchors.centerIn: closeid
                     }
 
@@ -156,15 +208,14 @@ ApplicationWindow {
 
                     Dialog {
                         id: confirmationDialogid
-                        width: 300
-                        height: 150
-
                         x: (parent.width - width) / 2
                         y: (parent.height - height) / 2
                         parent: Overlay.overlay
 
                         modal: true
                         title: "Closing Application"
+                        font.pointSize: Screen.height * 0.010
+                        font.family: "Helvetica"
                         standardButtons: Dialog.Ok | Dialog.Cancel
 
                         onAccepted: {
@@ -176,16 +227,17 @@ ApplicationWindow {
                         }
 
                         Row {
-                            spacing: 10
+                            spacing: 2
                             Image {
                                 id: questmark1id
                                 source: "qrc:/Image/QuestionMark.png"
-                                width: 30
-                                height: 30
+                                height: Math.round(30*scalefactor)
+                                width: Math.round(30*scalefactor)
                             }
 
                             Label {
                                 text: "Are you sure?"
+                                font.family: "Helvetica"
                             }
                         }
                     }
@@ -195,30 +247,27 @@ ApplicationWindow {
 
         Rectangle {
             id: homepageid
-            y: Screen.height * 0.04 // 40
+            y: Screen.height * 0.04 * scalefactor// 40
             color: "#000064"
-            // width: 1980
-            // height: 1050
             width: Screen.width * 2
             height: Screen.height * 3
 
             TabBar {
                 id: tabBarid
                 currentIndex: 6
-                // width: 1900
                 width: Screen.width * 2
 
                 TabButton {
                     id: tb1
-                    // width: 305
-                    width: Screen.width / 6
-                    height: 40
+                    width: Screen.width / 7.3
+                    height: Math.round(40*scalefactor)
 
                     Label {
                         id: lblid1
                         text: "Open"
                         color: "black"
-                        font.pointSize: 13
+                        font.pointSize: Screen.height * 0.016
+                        font.family: "Helvetica"
                         anchors.centerIn: tb1
                     }
 
@@ -242,6 +291,9 @@ ApplicationWindow {
                         rectid4.color = "#d9d9d9"
                         lblid6.color = "black"
                         rectid5.color = "#d9d9d9"
+                        cmnchan.color = "#d9d9d9"
+                        cmnch.color = "black"
+
                         mstackid.push("qrc:/Openfile.qml")
                     }
                 }
@@ -249,21 +301,21 @@ ApplicationWindow {
                 TabButton {
                     property int i: 0
                     id: tb2
-                    // width: 305
-                    width: Screen.width / 6
-                    height: 40
+                    width: Screen.width / 7.3
+                    height: Math.round(40*scalefactor)
 
                     Label {
                         id: lblid2
                         text: "Setting"
                         color: "black"
-                        font.pointSize: 13
+                        font.family: "Helvetica"
+                        font.pointSize: Screen.height * 0.016
                         anchors.centerIn: tb2
                     }
 
                     background: Rectangle {
                         id: rectid1
-                        color: "#d9d9d9" //"#f8b6e9"
+                        color: "#d9d9d9"
                         width: tabBarid.width
                     }
 
@@ -281,6 +333,8 @@ ApplicationWindow {
                         rectid4.color = "#d9d9d9"
                         lblid6.color = "black"
                         rectid5.color = "#d9d9d9"
+                        cmnchan.color = "#d9d9d9"
+                        cmnch.color = "black"
 
                         if (i == 0) {
                             mstackid.push("qrc:/Settingspage.qml")
@@ -293,15 +347,15 @@ ApplicationWindow {
 
                 TabButton {
                     id: tb3
-                    // width: 305
-                    width: Screen.width / 6
-                    height: 40
+                    width: Screen.width / 7.3
+                    height: Math.round(40*scalefactor)
 
                     Label {
                         id: lblid3
                         text: "Flash Command"
                         color: "black"
-                        font.pointSize: 13
+                        font.family: "Helvetica"
+                        font.pointSize: Screen.height * 0.016
                         anchors.centerIn: tb3
                     }
 
@@ -325,6 +379,8 @@ ApplicationWindow {
                         rectid4.color = "#d9d9d9"
                         lblid6.color = "black"
                         rectid5.color = "#d9d9d9"
+                        cmnchan.color = "#d9d9d9"
+                        cmnch.color = "black"
 
                         mstackid.push("qrc:/Flashcmd.qml")
                     }
@@ -332,15 +388,15 @@ ApplicationWindow {
 
                 TabButton {
                     id: tb9
-                    // width: 305
-                    width: Screen.width / 6
-                    height: 40
+                    width: Screen.width / 7.3
+                    height: Math.round(40*scalefactor)
 
                     Label {
                         id: cmnch
                         text: "Communication Channel"
                         color: "black"
-                        font.pointSize: 13
+                        font.family: "Helvetica"
+                        font.pointSize: Screen.height * 0.016
                         anchors.centerIn: tb9
                     }
 
@@ -351,8 +407,8 @@ ApplicationWindow {
                     }
 
                     onClicked: {
-                        rectid2.color = "#777f8c"
-                        lblid3.color = "white"
+                        cmnchan.color = "#777f8c"
+                        cmnch.color = "white"
 
                         lblid2.color = "black"
                         rectid1.color = "#d9d9d9"
@@ -364,22 +420,24 @@ ApplicationWindow {
                         rectid4.color = "#d9d9d9"
                         lblid6.color = "black"
                         rectid5.color = "#d9d9d9"
+                        rectid2.color = "#d9d9d9"
+                        lblid3.color = "black"
 
                         mstackid.push("qrc:/Communication.qml")
+
                     }
                 }
 
                 TabButton {
                     id: tb4
-                    // width: 305
-                    width: Screen.width / 6
-                    height: 40
-
+                    width: Screen.width / 7.3
+                    height: Math.round(40*scalefactor)
                     Label {
                         id: lblid4
                         text: "Help"
+                        font.family: "Helvetica"
                         color: "black"
-                        font.pointSize: 13
+                        font.pointSize: Screen.height * 0.016
                         anchors.centerIn: tb4
                     }
 
@@ -403,6 +461,8 @@ ApplicationWindow {
                         rectid4.color = "#d9d9d9"
                         lblid6.color = "black"
                         rectid5.color = "#d9d9d9"
+                        cmnchan.color = "#d9d9d9"
+                        cmnch.color = "black"
 
                         mstackid.push("qrc:/Helppage.qml")
                     }
@@ -410,16 +470,15 @@ ApplicationWindow {
 
                 TabButton {
                     id: tb5
-                    // width: 305
-                    width: Screen.width / 6
-                    height: 40
-                    font.pointSize: 13
+                    width: Screen.width / 7.3
+                    height: Math.round(40*scalefactor)
 
                     Label {
                         id: lblid5
                         text: "About"
                         color: "black"
-                        font.pointSize: 13
+                        font.family: "Helvetica"
+                        font.pointSize: Screen.height * 0.016
                         anchors.centerIn: tb5
                     }
 
@@ -443,6 +502,8 @@ ApplicationWindow {
                         rectid0.color = "#d9d9d9"
                         lblid6.color = "black"
                         rectid5.color = "#d9d9d9"
+                        cmnchan.color = "#d9d9d9"
+                        cmnch.color = "black"
 
                         mstackid.push("qrc:/Aboutpage.qml")
                     }
@@ -450,15 +511,15 @@ ApplicationWindow {
 
                 TabButton {
                     id: tb6
-                    // width: 305
-                    width: Screen.width / 6
-                    height: 40
+                    width: Screen.width / 7.3
+                    height: Math.round(40*scalefactor)
 
                     Label {
                         id: lblid6
                         text: "Exit"
                         color: "black"
-                        font.pointSize: 13
+                        font.family: "Helvetica"
+                        font.pointSize: Screen.height * 0.016
                         anchors.centerIn: tb6
                     }
 
@@ -472,8 +533,8 @@ ApplicationWindow {
 
                     Dialog {
                         id: confirmationDialog
-                        width: 310
-                        height: 150
+                        height: Math.round(150*scalefactor)
+                        width: Math.round(310*scalefactor)
 
                         x: (parent.width - width) / 2
                         y: (parent.height - height) / 2
@@ -481,6 +542,8 @@ ApplicationWindow {
 
                         modal: true
                         title: "Closing Application"
+                        font.family: "Helvetica"
+                        font.pointSize: Screen.height * 0.012
                         standardButtons: Dialog.Ok | Dialog.Cancel
 
                         onAccepted: {
@@ -491,101 +554,37 @@ ApplicationWindow {
                             confirmationDialog.close()
                         }
 
+
                         Row {
                             spacing: 10
                             Image {
                                 id: questmarkid
                                 source: "qrc:/Image/QuestionMark.png"
-                                width: 30
-                                height: 30
+                                height: Math.round(30*scalefactor)
+                                width: Math.round(30*scalefactor)
                             }
 
                             Label {
                                 text: "Are you sure?"
+                                font.pointSize: Screen.height * 0.012
+                                font.family: "Helvetica"
                             }
                         }
                     }
                 }
             }
         }
-
-        // Rectangle {
-        //     id: root
-        //     width: 640
-        //     height: 480
-        //     visible: false
-
-        //     Objref {
-        //         id: ref
-        //     }
-
-        //     Timer {
-        //         id: tm
-        //         running: true
-        //         interval: 1000
-        //         repeat: true
-        //         onTriggered: {
-        //             ref.check();
-        //             myPopup.visible = true; // Use a different id for your custom Popup
-        //             hideTimer.start();
-        //             // console.log("Timer_Worked or not")
-        //             // if(txt.text == "true")
-        //             // {
-        //             //     tm.stop();
-        //             // }
-        //             // else
-        //             // {
-        //             //     tm.start();
-        //             // }
-        //         }
-        //     }
-
-        //     Timer {
-        //         id: hideTimer
-        //         interval: 2000
-        //         repeat: false
-        //         onTriggered: {
-        //             myPopup.visible = false;
-        //         }
-        //     }
-
-        //     Connections {
-        //         target: ref
-        //         onStatus: {
-        //             myPopup.visible = val1;
-        //             txt.text = val2;
-        //             // tm.running = val3;
-        //             rect.color = val3;
-
-        //         }
-        //     }
-
-        //     Popup {
-        //         id: myPopup
-        //         visible: false
-        //         width: 150
-        //         height: 40
-
-        //         x: 850
-        //         y: 100
-
-        //             Text {
-        //                 id: txt
-        //                 text: ""
-        //                 color: "black"
-        //                 x: 20
-        //                 anchors.centerIn: myPopup
-        //             }
-        //         modal: true
-        //         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-        //     }
-        // }
     }
 
     StackView {
         id: mstackid
-        anchors.fill: parent
 
+        anchors {
+            left: parent.left
+            top: parent.top
+            leftMargin: Math.round(500 * scalefactor)
+            topMargin: Math.round(200 * scalefactor)
+        }
         pushEnter: Transition {
             NumberAnimation {
                 properties: "opacity"
@@ -619,6 +618,3 @@ ApplicationWindow {
         }
     }
 }
-
-
-

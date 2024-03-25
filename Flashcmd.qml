@@ -4,10 +4,16 @@ import QtQuick.Layouts 1.3
 
 Item {
     id: flashcmdid
-    width: 800 // 600
-    height: width
+
+    property real scalefactor : {
+        if(Screen.width > 1920) return 1.2
+        else if(Screen.height < 1080) return 0.8
+        else return 1
+    }
+
+    height: Math.round(800*scalefactor)
+    width: Math.round(800*scalefactor)
     visible: true
-    anchors.centerIn: parent
 
     Rectangle {
         id: homeid
@@ -16,33 +22,40 @@ Item {
         border.width: 1
 
         Rectangle {
-            width: 800 // 600
-            height: 25
+            id:r1
+            height: Math.round(25*scalefactor)
+            width: Math.round(800*scalefactor)
             color: "#777f8c"
 
-            Row {
-                spacing: 700 // 500
-
+            Rectangle{
                 Text {
                     id: txtid
                     text: qsTr(" Flash File")
-                    x: 5
-                    y: 1
-                    font.pointSize: 13
+                    font.family: "Helvetica"
+                    font.pointSize: Screen.height * 0.013
                     color: "white"
+                    anchors{
+                        left: r1.left
+                    }
                 }
+            }
 
+            Rectangle {
+                anchors{
+                    right: r1.right
+                }
                 Button {
                     id: closeid
-                    width: 25
-                    height: 25
-                    x: 574
+                    height: Math.round(25*scalefactor)
+                    width: Math.round(25*scalefactor)
+                    anchors.right: parent.right
+
 
                     Image {
                         id: close
                         source: "qrc:/Image/Close_red.png"
-                        width: 25
-                        height: 25
+                        height: Math.round(25*scalefactor)
+                        width: Math.round(25*scalefactor)
                         anchors.centerIn: closeid
                     }
 
@@ -55,68 +68,90 @@ Item {
 
         ColumnLayout {
             spacing: 15
-            y: 30
-            x: 7
-
+            y: parent.height * 0.04
+            x: parent.width * 0.01
             Row {
                 spacing: 13
 
                 Label {
-                    text: "OS Types: "
-                    font.pointSize: 13
-                    y: 10
+                    text: "Options"
+                    font.pointSize: Screen.height * 0.013
+                    font.family: "Helvetica"
                 }
 
-                TextField {
-                    id: textfiled
-                    width: 300
-                    font.pointSize: 13
+                ComboBox {
+                    id: _comb
+                    visible: true
+                    width: Math.round(200*scalefactor)
+                    model: ["Select","Windows", "Linux"]
+                    font.family: "Helvetica"
+
+                    onCurrentIndexChanged: {
+                        if (currentIndex === 2) {
+                            linuxTerminal.visible = true
+                            windowsPromt.visible = false
+                        } else if (currentIndex === 1) {
+                            windowsPromt.visible = true
+                            linuxTerminal.visible = false
+                        }
+                    }
                 }
             }
 
             Rectangle {
-                visible: true
-                width: 785 // 585
-                height: 700 // 500
+                id: linuxTerminal
+                visible: false
+                height: Math.round(700*scalefactor)
+                width: Math.round(785*scalefactor)
 
-                Row {
-                    id: rowid
+                Column {
                     spacing: 15
 
-                    TextField {
-                        id: commandInput
-                        placeholderText: "Enter command..."
-                        width: 630 // 430
+                    Text {
+                        id: linuxid
+                        text: qsTr("Linux Terminal")
                     }
 
-                    Button {
-                        text: "Launch Command"
-                        onClicked: {
-                            launcher.launchCommand(commandInput.text);
+                    Row {
+                        id: rowid
+                        spacing: 15
+
+                        TextField {
+                            id: commandInput
+                            placeholderText: "Enter command..."
+                            font.family: "Helvetica"
+                            width: Math.round(630*scalefactor)
                         }
-                        enabled: commandInput.text.trim().length > 0
+
+                        Button {
+                            text: "Launch Command"
+                            font.family: "Helvetica"
+                            onClicked: {
+                                launcher.launchCommand(commandInput.text);
+                            }
+                            enabled: commandInput.text.trim().length > 0
+                        }
                     }
-                }
 
-                ScrollView {
-                    y: 55
-                    width: parent.width
-                    height: parent.height - 80
-
-                    TextArea {
-                        id: commandOutput
+                    ScrollView {
+                        y: parent.height * 0.1 // Adjust the position dynamically, here 0.1 indicates 10% from the top
                         width: parent.width
-                        height: contentHeight
-                        readOnly: true
-                        wrapMode: TextEdit.WordWrap
-                        anchors.top: parent.top
-                        textFormat: TextEdit.PlainText
+                        height: parent.height * 0.87
 
-                        background: Rectangle {
-                            color: "black"
+                        TextArea {
+                            id: commandOutput
+                            width: parent.width
+                            height: contentHeight
+                            readOnly: true
+                            wrapMode: TextEdit.WordWrap
+                            anchors.top: parent.top
+                            textFormat: TextEdit.PlainText
+
+                            background: Rectangle {
+                                color: "black"
+                            }
+                            color: "white"
                         }
-
-                        color: "white"
                     }
                 }
 
@@ -127,6 +162,72 @@ Item {
                     }
                 }
             }
+
+            Rectangle {
+                id: windowsPromt
+                visible: false
+                height: Math.round(700*scalefactor)
+                width: Math.round(785*scalefactor)
+
+                Column {
+                    spacing: 15
+
+                    Text {
+                        id: cmdpromtid
+                        text: qsTr("Command Promt")
+                    }
+
+                    Row {
+                        id: rowid1
+                        spacing: 15
+
+                        TextField {
+                            id: promtcommandInput
+                            placeholderText: "Enter command..."
+                            font.family: "Helvetica"
+                            width: Math.round(630*scalefactor)
+                        }
+
+                        Button {
+                            text: "Launch Command"
+                            font.family: "Helvetica"
+                            onClicked: {
+                                launcher.windowsPromt(promtcommandInput.text);
+                            }
+                            enabled: promtcommandInput.text.trim().length > 0
+                        }
+                    }
+
+                    ScrollView {
+                        y: parent.height * 0.1 // Adjust the position dynamically, here 0.1 indicates 10% from the top
+                        width: parent.width
+                        height: parent.height * 0.87
+
+                        TextArea {
+                            id: commandOutput1
+                            width: parent.width
+                            height: contentHeight
+                            readOnly: true
+                            wrapMode: TextEdit.WordWrap
+                            anchors.top: parent.top
+                            textFormat: TextEdit.PlainText
+
+                            background: Rectangle {
+                                color: "black"
+                            }
+                            color: "white"
+                        }
+                    }
+                }
+
+                Connections {
+                    target: launcher
+                    onCommandOutputReady: {
+                        commandOutput1.text = output;
+                    }
+                }
+            }
         }
     }
 }
+

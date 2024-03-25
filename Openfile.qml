@@ -1,13 +1,11 @@
 import QtQuick 2.15
-import QtQuick.Dialogs
+import QtQuick.Dialogs 6.6
 import QtQuick.Controls 2.15
 
 Item {
     id: windid
-    height: 800
-    width: height
-
-    anchors.centerIn: parent
+    width: Math.min(Screen.desktopAvailableWidth * 0.418)
+    height: Math.min(Screen.desktopAvailableHeight * 0.74)
 
     property int i: 0
     property int j: 0
@@ -20,17 +18,25 @@ Item {
         }
     }
 
+    function showPopup(message, color) {
+        popupText.text = message
+        popup.color = color
+        popup.visible = true
+        popupTimer.restart()
+    }
+
     Rectangle {
         id:homePage
         anchors.fill: parent
-        border.color: "#616efd" // 616efd
+        border.color: "#616efd"
         border.width: 1
-        color: "#d5d5d5"
+        color: "white"
+
 
         Rectangle {
-            width: 800
-            height: 25
-            color: "#777f8c" //"#777F8C"
+            height: Math.round(25*scalefactor)
+            width: Math.round(800*scalefactor)
+            color: "#777f8c"
 
             Row {
                 spacing: 682
@@ -38,6 +44,7 @@ Item {
                 Text {
                     id: txtid
                     text: qsTr(" Choose File")
+                    font.family: "Helvetica"
                     x: 5
                     y: 1
                     font.pointSize: 13
@@ -46,15 +53,14 @@ Item {
 
                 Button {
                 id: closeid
-                width: 25
-
-                height: 25
+                height: Math.round(25*scalefactor)
+                width: Math.round(25*scalefactor)
                 x: 574
                     Image {
                         id: close
                         source: "qrc:/Image/Close_red.png"
-                        width: 25
-                        height: 25
+                        height: Math.round(25*scalefactor)
+                        width: Math.round(25*scalefactor)
                     }
 
                     onClicked: {
@@ -79,13 +85,14 @@ Item {
                     Text {
                         id: file1id
                         text: "Select File 1: "
+                        font.family: "Helvetica"
                         font.pointSize: 13
                     }
 
                     Frame {
                         id: rect1id
-                        width: 550
-                        height: 33
+                        height: Math.round(33*scalefactor)
+                        width: Math.round(550*scalefactor)
 
                         Label {
                             id: selectedFilePathLabel1
@@ -96,14 +103,15 @@ Item {
 
                         Button {
                             id: btn1
-                            width: 30
-                            height: 27
+                            height: Math.round(27*scalefactor)
+                            width: Math.round(30*scalefactor)
                             x: 505
                             y: -9
 
                             ToolTip.delay: 1000
                             ToolTip.visible: hovered
                             ToolTip.text: "Add file that is to be flashed"
+                            font.family: "Helvetica"
 
                             Image {
                                 id: dwn1arid
@@ -140,6 +148,7 @@ Item {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Clears the attached file"
+                    font.family: "Helvetica"
 
                     Image {
                         id: clearid
@@ -163,6 +172,7 @@ Item {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Adds more files"
+                    font.family: "Helvetica"
 
 
                     onClicked: {
@@ -191,6 +201,7 @@ Item {
                         id: file2id
                         text: "Select File 2: "
                         font.pointSize: 13
+                        font.family: "Helvetica"
                     }
 
                     Frame {
@@ -215,6 +226,7 @@ Item {
                             ToolTip.delay: 1000
                             ToolTip.visible: hovered
                             ToolTip.text: "Add file that is to be flashed"
+                            font.family: "Helvetica"
 
                             Image {
                                 id: dwn2arid
@@ -252,6 +264,7 @@ Item {
                         ToolTip.delay: 1000
                         ToolTip.visible: hovered
                         ToolTip.text: "Clears the attached file"
+                        font.family: "Helvetica"
 
                         Image {
                             id: clear2id
@@ -275,6 +288,7 @@ Item {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Clears the files that are not used"
+                    font.family: "Helvetica"
 
                     onClicked: {
                         j++
@@ -303,6 +317,7 @@ Item {
                     id: file3id
                     text: "Select File 3: "
                     font.pointSize: 13
+                    font.family: "Helvetica"
                 }
 
                 Frame {
@@ -327,6 +342,7 @@ Item {
                         ToolTip.delay: 1000
                         ToolTip.visible: hovered
                         ToolTip.text: "Add file that is to be flashed"
+                        font.family: "Helvetica"
 
                         Image {
                             id: dwn3arid
@@ -362,6 +378,7 @@ Item {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Clears the attached file"
+                    font.family: "Helvetica"
 
                     Image {
                         id: clear3id
@@ -384,6 +401,7 @@ Item {
                     id: file4id
                     text: "Select File 4: "
                     font.pointSize: 13
+                    font.family: "Helvetica"
                 }
 
                 Frame {
@@ -408,6 +426,7 @@ Item {
                         ToolTip.delay: 1000
                         ToolTip.visible: hovered
                         ToolTip.text: "Add file that is to be flashed"
+                        font.family: "Helvetica"
 
                         Image {
                             id: dwnarid
@@ -443,6 +462,7 @@ Item {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Clears the attached file"
+                    font.family: "Helvetica"
 
                     Image {
                         id: clear4id
@@ -465,6 +485,7 @@ Item {
                     id: file5id
                     text: "Select File 5: "
                     font.pointSize: 13
+                    font.family: "Helvetica"
                 }
 
                 Frame {
@@ -489,6 +510,7 @@ Item {
                         ToolTip.delay: 1000
                         ToolTip.visible: hovered
                         ToolTip.text: "Add file that is to be flashed"
+                        font.family: "Helvetica"
 
                         Image {
                             id: dwn5arid
@@ -546,6 +568,7 @@ Item {
                     id: file6id
                     text: "Select File 6: "
                     font.pointSize: 13
+                    font.family: "Helvetica"
                 }
 
                 Frame {
@@ -570,6 +593,7 @@ Item {
                         ToolTip.delay: 1000
                         ToolTip.visible: hovered
                         ToolTip.text: "Add file that is to be flashed"
+                        font.family: "Helvetica"
 
                         Image {
                             id: dwn6arid
@@ -604,6 +628,7 @@ Item {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Clears the attached file"
+                    font.family: "Helvetica"
 
                     Image {
                         id: clear6id
@@ -627,6 +652,7 @@ Item {
                 Text {
                     id: file7id
                     text: "Select File 7: "
+                    font.family: "Helvetica"
                     font.pointSize: 13
                 }
 
@@ -652,6 +678,7 @@ Item {
                         ToolTip.delay: 1000
                         ToolTip.visible: hovered
                         ToolTip.text: "Add file that is to be flashed"
+                        font.family: "Helvetica"
 
                         Image {
                             id: dwn7arid
@@ -687,6 +714,7 @@ Item {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Clears the attached file"
+                    font.family: "Helvetica"
 
                     Image {
                         id: clear7id
@@ -710,6 +738,7 @@ Item {
                 Text {
                     id: file8id
                     text: "Select File 8: "
+                    font.family: "Helvetica"
                     font.pointSize: 13
                 }
 
@@ -735,6 +764,7 @@ Item {
                         ToolTip.delay: 1000
                         ToolTip.visible: hovered
                         ToolTip.text: "Add file that is to be flashed"
+                        font.family: "Helvetica"
 
                         Image {
                             id: dwn8arid
@@ -770,6 +800,7 @@ Item {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Clears the attached file"
+                    font.family: "Helvetica"
 
                     Image {
                         id: clear8id
@@ -794,6 +825,7 @@ Item {
                     id: file9id
                     text: "Select File 9: "
                     font.pointSize: 13
+                    font.family: "Helvetica"
                 }
 
                 Frame {
@@ -818,6 +850,7 @@ Item {
                         ToolTip.delay: 1000
                         ToolTip.visible: hovered
                         ToolTip.text: "Add file that is to be flashed"
+                        font.family: "Helvetica"
 
                         Image {
                             id: dwn9arid
@@ -853,6 +886,7 @@ Item {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Clears the attached file"
+                    font.family: "Helvetica"
 
                     Image {
                         id: clear9id
@@ -877,6 +911,7 @@ Item {
                     id: file10id
                     text: "Select File 10: "
                     font.pointSize: 13
+                    font.family: "Helvetica"
                 }
 
                 Frame {
@@ -901,6 +936,7 @@ Item {
                         ToolTip.delay: 1000
                         ToolTip.visible: hovered
                         ToolTip.text: "Add file that is to be flashed"
+                        font.family: "Helvetica"
 
                         Image {
                             id: dwn10arid
@@ -936,6 +972,7 @@ Item {
                     ToolTip.delay: 1000
                     ToolTip.visible: hovered
                     ToolTip.text: "Clears the attached file"
+                    font.family: "Helvetica"
 
                     Image {
                         id: clear10id
@@ -966,12 +1003,29 @@ Item {
                 ToolTip.delay: 1000
                 ToolTip.visible: hovered
                 ToolTip.text: "Attach files that is to be flashed"
+                font.family: "Helvetica"
+
+                onClicked: {
+                    var atLeastOneFilled = false;
+                    if (selectedFilePathLabel1.text !== "" || selectedFilePathLabel2.text !== "" ||
+                            selectedFilePathLabel3.text !== "" ||
+                            selectedFilePathLabel4.text !== "" || selectedFilePathLabel5.text !== "") {
+                        atLeastOneFilled = true;
+                    }
+                    if (atLeastOneFilled ) {
+                        showPopup("Successfully submitted", "green")
+
+                    } else {
+                        showPopup("Please fill at least one field", "red")
+                    }
+                }
             }
 
             Button {
                 property int i: 1
                 text: "Cancel"
                 font.pointSize: 13
+                font.family: "Helvetica"
                 width: 90
                 height: 35
 
@@ -992,6 +1046,34 @@ Item {
                     selectedFilePathLabel10.visible = false
                 }
             }
+        }
+    }
+
+    Rectangle {
+        id: popup
+        width: 400
+        height: 50
+        color: "transparent"
+        border.color: "black"
+        radius: 10
+        visible: false
+        y: Math.round(-85* scalefactor)
+        x: Math.round(200 *scalefactor)
+
+        Text {
+            id: popupText
+            anchors.centerIn: parent
+            font.bold: true
+            font.pixelSize: 18
+
+            color: "white"
+            text: ""
+        }
+
+        Timer {
+            id: popupTimer
+            interval: 1500
+            onTriggered: popup.visible = false
         }
     }
 }

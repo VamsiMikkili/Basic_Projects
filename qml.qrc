@@ -4,7 +4,6 @@
         <file>Settingspage.qml</file>
         <file>Openfile.qml</file>
         <file>Flashcmd.qml</file>
-        <file>Savefile.qml</file>
         <file>Helppage.qml</file>
         <file>Aboutpage.qml</file>
         <file>Communication.qml</file>
